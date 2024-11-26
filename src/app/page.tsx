@@ -1,7 +1,7 @@
 'use client';
 
 import FacultyCard from '@/components/facultycard';
-import { Button, Input, select } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 
 interface Faculty {
@@ -13,6 +13,7 @@ interface Faculty {
 
 export default function Home() {
 	const [selected, setSelected] = useState('all');
+	const [searchQuery, setSearchQuery] = useState('');
 	const [filtered, setFiltered] = useState<Faculty[]>([]);
 
 	const faculty: Faculty[] = [
@@ -44,15 +45,21 @@ export default function Home() {
 
 	useEffect(() => {
 		const facultyFiltered = faculty.filter((fac) => {
-			if (selected === 'in') {
-				return fac.is_in;
-			} else if (selected === 'out') {
-				return !fac.is_in;
-			}
+			const matchesSelected =
+				selected === 'all' ||
+				(selected === 'in' && fac.is_in) ||
+				(selected === 'out' && !fac.is_in);
+
+			const matchesSearchQuery =
+				!searchQuery ||
+				fac.f_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				fac.l_name.toLowerCase().includes(searchQuery.toLowerCase());
+
+			return matchesSelected && matchesSearchQuery;
 		});
 
 		setFiltered(facultyFiltered);
-	}, [selected]);
+	}, [selected, searchQuery]);
 
 	return (
 		<>
@@ -63,6 +70,8 @@ export default function Home() {
 						placeholder="Search faculty"
 						radius="full"
 						className="lg:w-96"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
 					/>
 					<div className="">
 						<div className="flex gap-x-1 lg:gap-x-3">
@@ -108,6 +117,17 @@ export default function Home() {
 						<h1 className="font-bold text-2xl uppercase text-gray-700">
 							{selected}
 						</h1>
+					</div>
+
+					<div className="flex justify-center gap-x-2 my-4">
+						<div className="flex items-center gap-x-2">
+							<div className="h-1 w-8 bg-green-400"></div>
+							<p className="text-sm">In</p>
+						</div>
+						<div className="flex items-center gap-x-2">
+							<div className="h-1 w-8 bg-red-400"></div>
+							<p className="text-sm">Out</p>
+						</div>
 					</div>
 
 					<div className="w-full flex justify-center">
