@@ -37,7 +37,7 @@ export default function Home() {
 	});
 
 	useEffect(() => {
-		return unsubscribe();
+		return () => unsubscribe();
 	}, []);
 
 	useEffect(() => {

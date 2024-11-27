@@ -49,7 +49,7 @@ const Page = () => {
 	});
 
 	useEffect(() => {
-		return unsubscribe();
+		return () => unsubscribe();
 	}, []);
 
 	return (
