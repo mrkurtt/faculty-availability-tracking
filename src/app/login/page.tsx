@@ -19,7 +19,6 @@ const Page = () => {
 		try {
 			await signInWithEmailAndPassword(auth, email, password).then(
 				(userCredential) => {
-					console.log('User signed in:', userCredential.user);
 					router.push('/admin');
 				}
 			);

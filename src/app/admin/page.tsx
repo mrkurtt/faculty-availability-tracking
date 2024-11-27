@@ -6,7 +6,6 @@ import Link from 'next/link';
 import AdminFacultyCard from '@/components/adminfacultycard';
 import { auth, db } from '@/config/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
-import useAuth from '@/hooks/useAuth';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/protectedroute';
