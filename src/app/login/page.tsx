@@ -1,7 +1,40 @@
+'use client';
+
+import { auth } from '@/config/firebase';
+import useAuth from '@/hooks/useAuth';
 import { Button, Card, CardBody, Input } from '@nextui-org/react';
-import React from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 const Page = () => {
+	const router = useRouter();
+	const { user } = useAuth();
+
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState(false);
+
+	const login = async () => {
+		try {
+			await signInWithEmailAndPassword(auth, email, password).then(
+				(userCredential) => {
+					console.log('User signed in:', userCredential.user);
+					router.push('/admin');
+				}
+			);
+		} catch (error: any) {
+			console.error('Error signing in:', error.message);
+			setError(true);
+		}
+	};
+
+	useEffect(() => {
+		if (user) {
+			router.push('/admin');
+		}
+	}, [user]);
+
 	return (
 		<div className="w-full h-screen flex justify-center items-center">
 			<Card className="w-96">
@@ -10,11 +43,25 @@ const Page = () => {
 					<p className="">LOGIN</p>
 
 					<div className="flex flex-col gap-y-4 mt-8">
-						<Input label="Username" />
-						<Input label="Password" />
+						<Input
+							type="email"
+							label="Email Address"
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+						<Input
+							label="Password"
+							onChange={(e) => setPassword(e.target.value)}
+						/>
 					</div>
-
-					<Button className="mt-8 bg-blue-500 text-white">Login</Button>
+					<p className="text-red-500 text-sm mt-4">
+						{error && 'Invalid credential.'}
+					</p>
+					<Button
+						className="mt-8 bg-blue-500 text-white"
+						onClick={() => login()}
+					>
+						Login
+					</Button>
 				</CardBody>
 			</Card>
 		</div>
