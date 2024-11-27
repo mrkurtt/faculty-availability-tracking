@@ -3,8 +3,11 @@
 import FacultyCard from '@/components/facultycard';
 import { Button, Input } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
+import { db } from '@/config/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
 
 interface Faculty {
+	id: string;
 	f_name: string;
 	l_name: string;
 	is_in: boolean;
@@ -15,33 +18,27 @@ export default function Home() {
 	const [selected, setSelected] = useState('all');
 	const [searchQuery, setSearchQuery] = useState('');
 	const [filtered, setFiltered] = useState<Faculty[]>([]);
+	const [faculty, setFaculty] = useState<Faculty[]>([]);
 
-	const faculty: Faculty[] = [
-		{
-			f_name: 'Darwin Jone',
-			l_name: 'Jupiter',
-			is_in: true,
-			status: 'Available',
-		},
-		{
-			f_name: 'Sprinztsie',
-			l_name: 'Garrucha',
-			is_in: false,
-			status: 'Not Available',
-		},
-		{
-			f_name: 'Rodesita',
-			l_name: 'Estenzo',
-			is_in: true,
-			status: 'Busy',
-		},
-		{
-			f_name: 'Juliet',
-			l_name: 'Cagampang',
-			is_in: false,
-			status: 'Not Available',
-		},
-	];
+	const colRef = collection(db, 'faculties');
+
+	const unsubscribe = onSnapshot(colRef, (snapshot) => {
+		const fetchedFaculties: Faculty[] = snapshot.docs.map((doc) => {
+			const data = doc.data();
+			return {
+				id: doc.id,
+				f_name: data.f_name || 'Unknown',
+				l_name: data.l_name || 'Unknown',
+				is_in: data.is_in || false,
+				status: data.status || 'Inactive',
+			};
+		});
+		setFaculty(fetchedFaculties);
+	});
+
+	useEffect(() => {
+		return unsubscribe();
+	}, []);
 
 	useEffect(() => {
 		const facultyFiltered = faculty.filter((fac) => {
@@ -136,6 +133,7 @@ export default function Home() {
 								? faculty.map((fac, index) => (
 										<FacultyCard
 											key={`faculty-${index}`}
+											id={fac.id}
 											f_name={fac.f_name}
 											l_name={fac.l_name}
 											is_in={fac.is_in}
@@ -145,6 +143,7 @@ export default function Home() {
 								: filtered.map((fac, index) => (
 										<FacultyCard
 											key={`faculty-${index}`}
+											id={fac.id}
 											f_name={fac.f_name}
 											l_name={fac.l_name}
 											is_in={fac.is_in}

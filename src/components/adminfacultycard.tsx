@@ -12,8 +12,11 @@ import {
 import { CgProfile } from 'react-icons/cg';
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '@/config/firebase';
 
 interface IFacultyCardProps {
+	id: string;
 	f_name: string;
 	l_name: string;
 	is_in: boolean;
@@ -21,11 +24,29 @@ interface IFacultyCardProps {
 }
 
 const AdminFacultyCard = ({
+	id,
 	f_name,
 	l_name,
 	is_in,
 	status,
 }: IFacultyCardProps) => {
+	const handleUpdateStatus = async (
+		id: string,
+		status: string,
+		f_name: string,
+		l_name: string,
+		is_in: boolean
+	) => {
+		const ref = doc(db, 'faculties', id);
+
+		setDoc(ref, {
+			f_name,
+			l_name,
+			is_in,
+			status,
+		}).then(() => console.log('doc updated'));
+	};
+
 	return (
 		<Card
 			className={`flex flex-col items-center border-2 p-2 rounded-xl ${
@@ -50,18 +71,20 @@ const AdminFacultyCard = ({
 						<DropdownTrigger>
 							<Button
 								variant="bordered"
-								className="w-full bg-white border-blue-400 text-blue-400 text-xs mt-4"
+								className="w-full bg-white border-gray-400 text-gray-400 text-xs mt-4"
 							>
 								Update Status
 							</Button>
 						</DropdownTrigger>
 						<DropdownMenu
 							aria-label="Static Actions"
-							onAction={(key) => alert(key)}
+							onAction={(key) =>
+								handleUpdateStatus(id, `${key}`, f_name, l_name, is_in)
+							}
 						>
-							<DropdownItem key={'busy'}>Busy</DropdownItem>
-							<DropdownItem key={'available'}>Available</DropdownItem>
-							<DropdownItem key={'onclass'}>On Class</DropdownItem>
+							<DropdownItem key={'Busy'}>Busy</DropdownItem>
+							<DropdownItem key={'Available'}>Available</DropdownItem>
+							<DropdownItem key={'On Class'}>On Class</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				)}
