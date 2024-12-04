@@ -21,6 +21,7 @@ interface IFacultyCardProps {
 	l_name: string;
 	is_in: boolean;
 	status: string;
+	rfid: number;
 }
 
 const AdminFacultyCard = ({
@@ -29,6 +30,7 @@ const AdminFacultyCard = ({
 	l_name,
 	is_in,
 	status,
+	rfid,
 }: IFacultyCardProps) => {
 	const handleUpdateStatus = async (
 		id: string,
@@ -44,6 +46,7 @@ const AdminFacultyCard = ({
 			l_name,
 			is_in,
 			status,
+			rfid,
 		}).then(() => console.log('doc updated'));
 	};
 

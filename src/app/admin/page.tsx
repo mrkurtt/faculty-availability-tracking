@@ -16,6 +16,7 @@ interface Faculty {
 	l_name: string;
 	is_in: boolean;
 	status: string;
+	rfid: number;
 }
 
 const Page = () => {
@@ -42,6 +43,7 @@ const Page = () => {
 				f_name: data.f_name || 'Unknown',
 				l_name: data.l_name || 'Unknown',
 				is_in: data.is_in || false,
+				rfid: data.rfid,
 				status: data.status || 'Inactive',
 			};
 		});
@@ -89,6 +91,7 @@ const Page = () => {
 								l_name={fac.l_name}
 								is_in={fac.is_in}
 								status={fac.status}
+								rfid={fac.rfid}
 							/>
 						))}
 					</div>
